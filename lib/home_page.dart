@@ -19,47 +19,69 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List lyrics =
-  [{"title":"T1","lyric":"mujhko barsaat bana lo"},
-    {"title":"T2","lyric":"mujhko barsaat bana lo"},
-    {"title":"T3","lyric":"mujhko barsaat bana lo"},
-    {"title":"T4","lyric":"mujhko barsaat bana lo"},
-    {"title":"T5","lyric":"mujhko barsaat bana lo"},
-    {"title":"T6","lyric":"mujhko barsaat bana lo"},
-    {"title":"T7","lyric":"mujhko barsaat bana lo"},
-    {"title":"T8","lyric":"mujhko barsaat bana lo"},
-    {"title":"T8","lyric":"mujhko barsaat bana lo"},
-    {"title":"T10","lyric":"mujhko barsaat bana lo"},
-  ];
+  List tempLyrics=[];
+  List lyrics = [];
+  List filterList = [];
+@override
+  void initState() {
+  readData();
+    super.initState();
+  }
 
   FirebaseApp app;
 
   _HomePageState({required this.app});
 
   readData(){
-
+print("-------------------------read data");
    FirebaseDatabase.instanceFor(app: app,
         databaseURL: "https://lyrics-2834d-default-rtdb.asia-southeast1.firebasedatabase.app")
         .ref()
         .child("lyrics").once().then((val) {
      // Handle the data
+
+       tempLyrics=[];
+      lyrics=[];
    val.snapshot.children.forEach((element) {
-     print(element.value);
+     print("inside for loop");
+      print(element.value);
+     tempLyrics.add(element.value);
+   });
+   setState(() {
+     lyrics=List.from(tempLyrics);
+     filterList=List.from(lyrics);
    });
    });
 
   }
 
-
+void searchQuery(String str){
+    filterList=[];
+    tempLyrics=[];
+    lyrics.forEach((element) {
+      print("elem------------------------");
+      print(element);
+      if(element["title"].contains(str)){
+        print("inside if ------------------------");
+        tempLyrics.add(element);
+      }
+    }
+    );
+    setState(() {
+      filterList = List.from(tempLyrics);
+      print(filterList);
+    });
+}
 
 
   @override
   Widget build(BuildContext context) {
-    readData();
+
     return Scaffold(
       appBar: AppBar(
         // backgroundColor: Colors.transparent,
         title: TextField(
+          onChanged: searchQuery,
             cursorColor:Colors.white54 ,
             style: TextStyle(color: Colors.white54),
             decoration: InputDecoration(
@@ -119,10 +141,11 @@ class _HomePageState extends State<HomePage> {
           children: [
             // MySearchBar(),
               SizedBox(height: 16,),
-              Expanded(child: ListView.builder(itemCount: 10,itemBuilder: (ctx,index){
+              Expanded(child: ListView.builder(itemCount: filterList.length,itemBuilder: (ctx,index){
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 16.0),
-                  child: MyListTile(),
+                  child: MyListTile(imgUrl:filterList[index]["imgUrl"],title: filterList[index]["title"],lyric: filterList[index]["lyric"],
+                  hindiLyric:filterList[index]["hindiLyric"]),
                 );
               }))
           ],

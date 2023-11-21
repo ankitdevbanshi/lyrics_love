@@ -3,7 +3,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:lyrics_love/pages/admin_page.dart';
 import 'package:lyrics_love/pages/auth_page.dart';
+import 'package:lyrics_love/pages/lyrics_page.dart';
 import 'package:lyrics_love/pages/temp.dart';
+import 'package:lyrics_love/temp.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:lyrics_love/home_page.dart';
@@ -50,8 +52,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
        debugShowCheckedModeBanner: false,
        theme: Provider.of<ThemeProvider>(context).themeData,
-      home: isFirstTime?OnBoardingScreeen():HomePage(),
-      // home:AdminPage()
+      // home: isFirstTime?OnBoardingScreeen():HomePage(),
+      home:AdminPage()
     );
   }
 }
